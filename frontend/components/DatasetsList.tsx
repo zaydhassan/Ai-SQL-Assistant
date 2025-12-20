@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import GlassCard from "./GlassCard";
 
 type Dataset = {
@@ -11,33 +12,84 @@ type Dataset = {
 
 export default function DatasetsList() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch datasets
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/datasets")
       .then((r) => r.json())
-      .then(setDatasets)
-      .catch(() => setDatasets([]));
+      .then((data) => {
+        setDatasets(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Failed to load datasets");
+        setLoading(false);
+      });
   }, []);
+  const removeDataset = async (id: number, name: string) => {
+
+    try {
+      await fetch(`http://127.0.0.1:8000/api/datasets/${id}`, {
+        method: "DELETE",
+      });
+
+      setDatasets((prev) => prev.filter((d) => d.id !== id));
+
+      toast.success("Dataset removed", {
+        description: `${name} deleted successfully`,
+      });
+    } catch {
+      toast.error("Failed to delete dataset");
+    }
+  };
 
   return (
     <GlassCard>
-      <h3>Your Datasets</h3>
+      <h3 className="mb-4">Your Datasets</h3>
 
-      {datasets.length === 0 && (
-        <p className="muted">No datasets uploaded yet</p>
+      {loading && (
+        <p className="muted text-sm">Loading datasets…</p>
       )}
 
-      <ul className="dataset-list">
+      {!loading && datasets.length === 0 && (
+        <p className="muted text-sm">
+          No datasets uploaded yet
+        </p>
+      )}
+
+      <ul className="space-y-2">
         {datasets.map((d) => (
-          <li key={d.id} className="dataset-item">
-            <Link href={`/datasets/${d.id}`}>
-              <span className="dataset-link">
+          <li
+            key={d.id}
+            className="group flex items-center justify-between rounded-lg border border-white/10 px-4 py-3 hover:bg-white/5 transition"
+          >
+          
+            <a
+              href={`/datasets/${d.id}`}
+              className="flex flex-col"
+            >
+              <span className="font-medium">
                 📊 {d.name}
               </span>
-              <span className="dataset-meta">
+              <span className="text-xs text-muted-foreground">
                 Ready for questions
               </span>
-            </Link>
+            </a>
+
+            {/* Delete Icon */}
+            <button
+              onClick={() => removeDataset(d.id, d.name)}
+              className="
+                text-muted-foreground
+                hover:text-red-400
+                opacity-0 group-hover:opacity-100
+                transition
+              "
+              title="Remove dataset"
+            >
+              <Trash2 size={18} />
+            </button>
           </li>
         ))}
       </ul>

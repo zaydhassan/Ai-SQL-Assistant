@@ -5,7 +5,7 @@ import ExamplePrompts from "@/components/ExamplePrompts";
 export default function HomePage() {
   return (
     <main className="container">
-      {/* ================= HERO ================= */}
+    
       <section className="hero fade-in">
         <h1>AI SQL Analytics Assistant</h1>
         <p className="muted hero-sub">
@@ -15,7 +15,6 @@ export default function HomePage() {
 
         <ExamplePrompts />
 
-        {/* TRUST BAR */}
         <div className="confidence-bar">
           <span>✔ Schema detected</span>
           <span>✔ Read-only SQL</span>
@@ -23,7 +22,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ================= HOW IT WORKS ================= */}
       <section className="how-it-works fade-in">
         <div className="how-step">
           <span>1</span>

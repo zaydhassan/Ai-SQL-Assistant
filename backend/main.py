@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from db import SessionLocal, engine
 from models import Dataset, Query, User
 from gemini_client import model
@@ -21,8 +22,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 def get_db():
     db = SessionLocal()
     try:
@@ -113,9 +112,38 @@ def get_dataset(dataset_id: str, db: Session = Depends(get_db)):
         "name": dataset.name,
         "created_at": dataset.created_at.isoformat() if dataset.created_at else None,
     }
+    
+@app.delete("/api/datasets/{dataset_id}")
+def delete_dataset(dataset_id: int, db: Session = Depends(get_db)):
+    user_id = 1
 
+    dataset = (
+        db.query(Dataset)
+        .filter(Dataset.id == dataset_id, Dataset.user_id == user_id)
+        .first()
+    )
 
-@app.post("/api/datasets/{dataset_id}/ask")
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+
+    table_name = dataset.table_name
+
+    try:
+        
+        db.execute(text(f'DROP TABLE IF EXISTS "{table_name}"'))
+
+        db.delete(dataset)
+
+        db.commit()
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to delete dataset: {e}",
+        )
+
+    return {"success": True}
 async def ask_dataset(
     dataset_id: int,
     payload: dict,

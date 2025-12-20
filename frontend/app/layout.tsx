@@ -1,4 +1,5 @@
 import "../app/globals.css";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -8,6 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        
         <nav className="navbar glass">
           <span className="logo">AI SQL</span>
           <a href="/" className="nav-link">
@@ -16,6 +18,12 @@ export default function RootLayout({
         </nav>
 
         {children}
+
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+        />
       </body>
     </html>
   );

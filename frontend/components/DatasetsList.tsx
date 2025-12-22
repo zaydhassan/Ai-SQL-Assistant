@@ -14,31 +14,69 @@ export default function DatasetsList() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch datasets
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/datasets")
-      .then((r) => r.json())
-      .then((data) => {
-        setDatasets(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        toast.error("Failed to load datasets");
-        setLoading(false);
-      });
-  }, []);
-  const removeDataset = async (id: number, name: string) => {
+  async function loadDatasets() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setDatasets([]);
+      setLoading(false);
+      return;
+    }
 
     try {
-      await fetch(`http://127.0.0.1:8000/api/datasets/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/datasets",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+      );
 
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+      setDatasets(data);
+    } catch {
+      toast.error("Failed to load datasets");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadDatasets();
+
+    window.addEventListener("dataset-updated", loadDatasets);
+
+    return () => {
+      window.removeEventListener("dataset-updated", loadDatasets);
+    };
+  }, []);
+
+  const removeDataset = async (id: number, name: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8000/api/datasets/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+      );
+
+      if (!res.ok) throw new Error();
       setDatasets((prev) => prev.filter((d) => d.id !== id));
 
       toast.success("Dataset removed", {
         description: `${name} deleted successfully`,
       });
+
+      window.dispatchEvent(new Event("dataset-updated"));
     } catch {
       toast.error("Failed to delete dataset");
     }
@@ -62,9 +100,13 @@ export default function DatasetsList() {
         {datasets.map((d) => (
           <li
             key={d.id}
-            className="group flex items-center justify-between rounded-lg border border-white/10 px-4 py-3 hover:bg-white/5 transition"
+            className="
+              group flex items-center justify-between
+              rounded-lg border border-white/10
+              px-4 py-3
+              hover:bg-white/5 transition
+            "
           >
-          
             <a
               href={`/datasets/${d.id}`}
               className="flex flex-col"
@@ -77,7 +119,6 @@ export default function DatasetsList() {
               </span>
             </a>
 
-            {/* Delete Icon */}
             <button
               onClick={() => removeDataset(d.id, d.name)}
               className="

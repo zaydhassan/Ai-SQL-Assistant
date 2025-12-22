@@ -20,6 +20,12 @@ export default function AskPanel({ datasetId }: Props) {
     e?.preventDefault();
     if (!question.trim() || loading) return;
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You are not logged in. Please login again.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setAnswer(null);
@@ -29,7 +35,10 @@ export default function AskPanel({ datasetId }: Props) {
         `${API_BASE}/api/datasets/${datasetId}/ask`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, 
+          },
           body: JSON.stringify({ question }),
         }
       );
@@ -51,27 +60,23 @@ export default function AskPanel({ datasetId }: Props) {
 
   return (
     <div className="ask-card glass glow fade-in">
-  <form onSubmit={handleAsk} className="ask-bar">
-    <input
-      className="input"
-      value={question}
-      onChange={(e) => setQuestion(e.target.value)}
-      placeholder="Ask anything about this dataset…"
-    />
-    <button type="submit" disabled={loading}>
-      {loading ? "Analyzing…" : "Ask"}
-    </button>
-  </form>
+      <form onSubmit={handleAsk} className="ask-bar">
+        <input
+          className="input"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ask anything about this dataset…"
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Analyzing…" : "Ask"}
+        </button>
+      </form>
 
-      {error && (
-        <div className="error-banner">
-          {error}
-        </div>
-      )}
+      {error && <div className="error-banner">{error}</div>}
 
       {answer && (
         <div className="result-stack">
-          {/* SQL CARD */}
+        
           <div className="sql-card">
             <div className="sql-header">
               <span className="badge">AI Generated SQL</span>
@@ -103,10 +108,9 @@ export default function AskPanel({ datasetId }: Props) {
           </div>
 
           {answer.rows && answer.rows.length > 0 && (
-           <>
-          <ChartRenderer rows={answer.rows} />
+            <>
+              <ChartRenderer rows={answer.rows} />
 
-              {/* TABLE */}
               <div className="table-wrap">
                 <table className="simple-table">
                   <thead>

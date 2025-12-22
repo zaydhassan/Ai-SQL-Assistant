@@ -3,16 +3,20 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from db import Base
+
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=True)
+    password_hash = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     datasets = relationship("Dataset", back_populates="owner")
     queries = relationship("Query", back_populates="user")
+
+
 class Dataset(Base):
     __tablename__ = "datasets"
 
@@ -24,6 +28,8 @@ class Dataset(Base):
 
     owner = relationship("User", back_populates="datasets")
     queries = relationship("Query", back_populates="dataset")
+
+
 class Query(Base):
     __tablename__ = "queries"
 

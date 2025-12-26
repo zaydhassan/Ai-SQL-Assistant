@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy import text
 from auth import (
     hash_password,
@@ -326,9 +327,24 @@ User question: "{question}"
         "analysis": analysis,
     }
 
-if os.path.exists("frontend/out"):
+FRONTEND_PATH = "frontend/out"
+
+if os.path.exists(FRONTEND_PATH):
     app.mount(
-        "/",
-        StaticFiles(directory="frontend/out", html=True),
-        name="frontend",
+        "/_next",
+        StaticFiles(directory=f"{FRONTEND_PATH}/_next"),
+        name="next-static",
     )
+
+    app.mount(
+        "/static",
+        StaticFiles(directory=FRONTEND_PATH),
+        name="static",
+    )
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        index_file = os.path.join(FRONTEND_PATH, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        return {"detail": "Frontend not built"}

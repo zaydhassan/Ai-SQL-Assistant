@@ -3,6 +3,7 @@
 import "../app/globals.css";
 import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function RootLayout({
   children,
@@ -29,9 +30,13 @@ export default function RootLayout({
             <div className="mx-auto flex h-full max-w-7xl items-center px-6">
               {/* LOGO */}
               <div className="flex items-center">
-                <span className="logo text-xl font-bold tracking-wide">
-                  AI SQL
-                </span>
+                <Link
+              href="/"
+              className="logo text-xl font-bold tracking-wide hover:opacity-90 transition"
+                >
+               AI SQL
+            </Link>
+
               </div>
 
               <div className="absolute left-1/2 hidden -translate-x-1/2 md:flex items-center gap-10">

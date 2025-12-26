@@ -9,6 +9,7 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from auth import (
     hash_password,
@@ -23,6 +24,7 @@ import pandas as pd
 import numpy as np
 import uuid
 import json
+import os
 
 app = FastAPI(title="AI SQL Assistant Backend")
 
@@ -323,3 +325,10 @@ User question: "{question}"
         "rows": q.result_json,
         "analysis": analysis,
     }
+
+if os.path.exists("frontend/out"):
+    app.mount(
+        "/",
+        StaticFiles(directory="frontend/out", html=True),
+        name="frontend",
+    )

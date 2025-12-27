@@ -27,6 +27,11 @@ import uuid
 import json
 import os
 
+from models import Base
+from db import engine
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(title="AI SQL Assistant Backend")
 
 app.add_middleware(

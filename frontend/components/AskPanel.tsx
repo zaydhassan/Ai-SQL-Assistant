@@ -12,6 +12,7 @@ export default function AskPanel({ datasetId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<any | null>(null);
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL;
   async function handleAsk(e?: React.FormEvent) {
     e?.preventDefault();
     if (!question.trim() || loading) return;
@@ -28,8 +29,8 @@ export default function AskPanel({ datasetId }: Props) {
 
     try {
 
-      const res = await fetch(
-  `/api/datasets/${datasetId}/ask`,
+     const res = await fetch(
+  `${API_BASE}/api/datasets/${datasetId}/ask`,
   {
     method: "POST",
     headers: {

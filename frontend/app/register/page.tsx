@@ -16,7 +16,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/auth/register", {
+      const res = await fetch("/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

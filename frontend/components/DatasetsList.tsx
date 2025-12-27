@@ -25,7 +25,7 @@ export default function DatasetsList() {
 
     try {
       const res = await fetch(
-        "http://127.0.0.1:8000/api/datasets",
+        "/api/datasets",
         {
           headers: {
             Authorization: `Bearer ${token}`, 
@@ -60,7 +60,7 @@ export default function DatasetsList() {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/datasets/${id}`,
+        `/api/datasets/${id}`,
         {
           method: "DELETE",
           headers: {

@@ -31,10 +31,7 @@ app = FastAPI(title="AI SQL Assistant Backend")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -327,24 +324,16 @@ User question: "{question}"
         "analysis": analysis,
     }
 
-FRONTEND_PATH = "frontend/out"
+FRONTEND_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "frontend",
+    "out",
+)
 
 if os.path.exists(FRONTEND_PATH):
     app.mount(
-        "/_next",
-        StaticFiles(directory=f"{FRONTEND_PATH}/_next"),
-        name="next-static",
+        "/",
+        StaticFiles(directory=FRONTEND_PATH, html=True),
+        name="frontend",
     )
-
-    app.mount(
-        "/static",
-        StaticFiles(directory=FRONTEND_PATH),
-        name="static",
-    )
-
-    @app.get("/{full_path:path}")
-    async def serve_frontend(full_path: str):
-        index_file = os.path.join(FRONTEND_PATH, "index.html")
-        if os.path.exists(index_file):
-            return FileResponse(index_file)
-        return {"detail": "Frontend not built"}

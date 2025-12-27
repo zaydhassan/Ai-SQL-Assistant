@@ -20,7 +20,7 @@ export default function LoginPage() {
     form.append("password", password);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/auth/login", {
+      const res = await fetch("/auth/login", {
         method: "POST",
         body: form,
       });

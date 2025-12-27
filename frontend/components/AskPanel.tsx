@@ -6,10 +6,6 @@ import ChartRenderer from "./ChartRenderer";
 type Props = {
   datasetId: string;
 };
-
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-
 export default function AskPanel({ datasetId }: Props) {
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,17 +27,18 @@ export default function AskPanel({ datasetId }: Props) {
     setAnswer(null);
 
     try {
+
       const res = await fetch(
-        `${API_BASE}/api/datasets/${datasetId}/ask`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, 
-          },
-          body: JSON.stringify({ question }),
-        }
-      );
+  `/api/datasets/${datasetId}/ask`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ question }),
+  }
+);
 
       const text = await res.text();
       const data = text ? JSON.parse(text) : null;
@@ -52,7 +49,7 @@ export default function AskPanel({ datasetId }: Props) {
         setAnswer(data);
       }
     } catch {
-      setError("Backend not reachable. Is it running?");
+      setError("Backend not reachable.");
     } finally {
       setLoading(false);
     }

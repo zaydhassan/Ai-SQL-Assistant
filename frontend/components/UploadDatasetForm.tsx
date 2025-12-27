@@ -24,7 +24,7 @@ export default function UploadDatasetForm() {
 
     try {
       const res = await fetch(
-        "http://127.0.0.1:8000/api/datasets/upload",
+        "/api/datasets/upload",
         {
           method: "POST",
           headers: {

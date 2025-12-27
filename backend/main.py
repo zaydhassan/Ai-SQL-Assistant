@@ -333,7 +333,7 @@ FRONTEND_PATH = os.path.join(
 
 if os.path.exists(FRONTEND_PATH):
     app.mount(
-        "/",
-        StaticFiles(directory=FRONTEND_PATH, html=True),
-        name="frontend",
-    )
+    "/app",
+    StaticFiles(directory=FRONTEND_PATH, html=True),
+    name="frontend",
+)

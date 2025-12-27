@@ -22,10 +22,12 @@ export default function UploadDatasetForm() {
 
     setLoading(true);
 
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
     try {
       const res = await fetch(
-        "`${API_BASE}/api/datasets/upload",
-        {
+  `${API_BASE}/api/datasets/upload`,
+  {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,

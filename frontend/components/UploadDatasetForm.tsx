@@ -11,7 +11,7 @@ export default function UploadDatasetForm() {
   async function upload() {
     if (!file) return;
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     if (!token) {
       toast.error("Please login first");
       return;
@@ -54,7 +54,7 @@ export default function UploadDatasetForm() {
     }
   }
 
-  return (
+ return (
     <div className="glass upload-card">
       <h3>Upload CSV</h3>
       <p className="muted">

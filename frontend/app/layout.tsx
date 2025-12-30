@@ -92,12 +92,7 @@ hover:brightness-110 transition"
             >
             AI SQL
             </Link>
-              <MobileNavToggle
-                isOpen={isMobileMenuOpen}
-                onClick={() =>
-                  setIsMobileMenuOpen(!isMobileMenuOpen)
-                }
-              />
+               <MobileNavToggle />
             </MobileNavHeader>
 
             <MobileNavMenu

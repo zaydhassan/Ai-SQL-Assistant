@@ -19,7 +19,7 @@ export default function AskPanel({ datasetId }: Props) {
     const finalQuestion = q ?? question;
     if (!finalQuestion.trim()) return;
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     if (!token) {
       setError("You are not logged in.");
       return;
@@ -83,13 +83,12 @@ export default function AskPanel({ datasetId }: Props) {
 
       {answer && (
         <div className="result-stack">
-          {/* SQL */}
+         
           <div className="glass fade-in">
             <strong>Generated SQL</strong>
             <pre className="sql-pre">{answer.sql}</pre>
           </div>
 
-          {/* SQL Explanation */}
           {answer.explanation && (
             <div className="info-banner glass fade-in">
               <strong>What this query does</strong>
@@ -97,7 +96,6 @@ export default function AskPanel({ datasetId }: Props) {
             </div>
           )}
 
-          {/* Insights */}
           {answer.analysis && (
             <div className="glass fade-in">
               <h4 className="mb-3">Quick Insights</h4>
@@ -130,12 +128,10 @@ export default function AskPanel({ datasetId }: Props) {
             </div>
           )}
 
-          {/* Chart */}
           {answer.rows && answer.rows.length > 0 && (
             <ChartRenderer rows={answer.rows} />
           )}
 
-          {/* Follow-up Suggestions */}
           <div className="glass fade-in">
             <h4 className="mb-3">Try refining your question</h4>
             <div className="chip-group">

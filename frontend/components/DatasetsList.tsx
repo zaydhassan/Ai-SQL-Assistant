@@ -17,7 +17,7 @@ export default function DatasetsList() {
   const [loading, setLoading] = useState(true);
 
   async function loadDatasets() {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
 
     if (!token) {
       setDatasets([]);
@@ -57,7 +57,7 @@ export default function DatasetsList() {
   }, []);
 
   const removeDataset = async (id: number, name: string) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     if (!token) return;
 
     try {
